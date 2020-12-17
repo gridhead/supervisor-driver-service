@@ -1,0 +1,5 @@
+services:
+  svdriver:
+    build: .
+    ports:
+      - "6969:6969"
