@@ -22,10 +22,19 @@ This project works as an intuitive remotely accessible system performance monito
 - Efficient JSON data structure for 100% faster updating with the use of **LiveSync** to refresh DOM contents
 - Relatively low overhead from the server during live stat (approx. 2MB over Python 3 runtime usage)
 - Live polling time period is left at client-side decision to stick to a simple client-server model
+- Monitoring information is provided by the awesome **`psutil`** library
 - Added protection using passcode verification parameter check and server-side authentication of data requests
 - Decoupled structure allows for connection to frontend service ([Check here](https://github.com/t0xic0der/supervisor-frontend-service))
 - Authenticated process management endpoints - **`TERMINATE`**, **`KILL`**, **`SUSPEND`** and **`RESUME`** ops
 - Rewritten entirely in Falcon WSGI and Werkzeug HTTP server to emphasise on speed, efficiency and cleaner code
+
+## Table of contents
+1. [Home](https://github.com/t0xic0der/supervisor-driver-service/wiki)
+2. [Notice](https://github.com/t0xic0der/supervisor-driver-service/wiki/Notice)
+3. [Installing on Raspberry Pi](https://github.com/t0xic0der/supervisor-driver-service/wiki/Installing-on-Raspberry-Pi)
+4. [Installing on a Generic PC](https://github.com/t0xic0der/supervisor-driver-service/wiki/Installing-on-a-Generic-PC)
+5. [Download releases](https://github.com/t0xic0der/supervisor-driver-service/releases)
+6. [SuperVisor Frontend Service](https://github.com/t0xic0der/supervisor-frontend-service)
 
 ## Contribute
 You may request for the addition of new features in the [issues](https://github.com/t0xic0der/supervisor-driver-service/issues) page but as the project is singlehandedly maintained - it might take time to develop on them. Please consider forking the repository and contributing to its development. :heart:
