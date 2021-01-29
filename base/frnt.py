@@ -20,16 +20,9 @@
 """
 
 import json
-from secrets import choice
 
 import falcon
 from base.back import DeadUpdatingElements, LiveUpdatingElements, ProcessHandler
-
-
-class ConnectionManager:
-    def passphrase_generator(self, lent=16):
-        retndata = "".join(choice("ABCDEF0123456789") for i in range(lent))
-        return retndata
 
 
 class StatisticalEndpoint(object):
@@ -39,12 +32,13 @@ class StatisticalEndpoint(object):
     def on_get(self, rqst, resp):
         passcode = rqst.get_param("passcode")
         opername = rqst.get_param("opername")
-        retnjson = {}
         if passcode == self.passcode:
             if opername == "livesync":
                 retnjson = LiveUpdatingElements().return_live_data()
             elif opername == "deadsync":
                 retnjson = DeadUpdatingElements().return_dead_data()
+            else:
+                retnjson = {"retnmesg": "deny"}
         else:
             retnjson = {"retnmesg": "deny"}
         resp.body = json.dumps(retnjson, ensure_ascii=False)
@@ -75,7 +69,6 @@ class ProcessControllingEndpoint(object):
         passcode = rqst.get_param("passcode")
         opername = rqst.get_param("opername")
         prociden = int(rqst.get_param("prociden"))
-        retnjson = {}
         if passcode == self.passcode:
             if opername == "KILL":
                 retnjson = ProcessHandler(prociden).process_killer()
@@ -85,6 +78,8 @@ class ProcessControllingEndpoint(object):
                 retnjson = ProcessHandler(prociden).process_suspender()
             elif opername == "CONT":
                 retnjson = ProcessHandler(prociden).process_resumer()
+            else:
+                retnjson = {"retnmesg": "deny"}
         else:
             retnjson = {"retnmesg": "deny"}
         resp.body = json.dumps(retnjson, ensure_ascii=False)
