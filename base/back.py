@@ -1,7 +1,7 @@
 """
 ##########################################################################
 *
-*   Copyright © 2019-2020 Akashdeep Dhar <t0xic0der@fedoraproject.org>
+*   Copyright © 2019-2021 Akashdeep Dhar <t0xic0der@fedoraproject.org>
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -22,15 +22,8 @@
 import getpass
 import os
 import time
-from secrets import choice
 
 import psutil
-
-
-class ConnectionManager:
-    def passphrase_generator(self, lent=16):
-        retndata = "".join(choice("ABCDEF0123456789") for i in range(lent))
-        return retndata
 
 
 class ProcessHandler:

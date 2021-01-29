@@ -1,7 +1,7 @@
 """
 ##########################################################################
 *
-*   Copyright © 2019-2020 Akashdeep Dhar <t0xic0der@fedoraproject.org>
+*   Copyright © 2019-2021 Akashdeep Dhar <t0xic0der@fedoraproject.org>
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -19,125 +19,19 @@
 ##########################################################################
 """
 
-import json
-
 import click
 import falcon
-from falcon import __version__ as flcnvers
-from base.hard import (
+from base.frnt import (
     ConnectionManager,
-    DeadUpdatingElements,
-    LiveUpdatingElements,
-    ProcessHandler,
+    ProcessControllingEndpoint,
+    ProcessHandlingEndpoint,
+    StatisticalEndpoint,
 )
+from falcon import __version__ as flcnvers
 from psutil import __version__ as psutvers
 from werkzeug import __version__ as wkzgvers
+from docker import __version__ as dockvers
 from werkzeug import serving
-
-
-class LiveUpdatingEndpoint(object):
-    def __init__(self, passcode):
-        self.passcode = passcode
-
-    def on_get(self, rqst, resp):
-        passcode = rqst.get_param("passcode")
-        if passcode == self.passcode:
-            retnjson = LiveUpdatingElements().return_live_data()
-        else:
-            retnjson = {"retnmesg": "deny"}
-        resp.body = json.dumps(retnjson, ensure_ascii=False)
-        resp.set_header("Access-Control-Allow-Origin", "*")
-        resp.status = falcon.HTTP_200
-
-
-class DeadUpdatingEndpoint(object):
-    def __init__(self, passcode):
-        self.passcode = passcode
-
-    def on_get(self, rqst, resp):
-        passcode = rqst.get_param("passcode")
-        if passcode == self.passcode:
-            retnjson = DeadUpdatingElements().return_dead_data()
-        else:
-            retnjson = {"retnmesg": "deny"}
-        resp.body = json.dumps(retnjson, ensure_ascii=False)
-        resp.set_header("Access-Control-Allow-Origin", "*")
-        resp.status = falcon.HTTP_200
-
-
-class ProcessHandlingEndpoint(object):
-    def __init__(self, passcode):
-        self.passcode = passcode
-
-    def on_get(self, rqst, resp):
-        passcode = rqst.get_param("passcode")
-        if passcode == self.passcode:
-            retnjson = ProcessHandler(int(rqst.get_param("prociden"))).return_process_info()
-        else:
-            retnjson = {"retnmesg": "deny"}
-        resp.body = json.dumps(retnjson, ensure_ascii=False)
-        resp.set_header("Access-Control-Allow-Origin", "*")
-        resp.status = falcon.HTTP_200
-
-
-class ProcessKillingEndpoint(object):
-    def __init__(self, passcode):
-        self.passcode = passcode
-
-    def on_get(self, rqst, resp):
-        passcode = rqst.get_param("passcode")
-        if passcode == self.passcode:
-            retnjson = ProcessHandler(int(rqst.get_param("prociden"))).process_killer()
-        else:
-            retnjson = {"retnmesg": "deny"}
-        resp.body = json.dumps(retnjson, ensure_ascii=False)
-        resp.set_header("Access-Control-Allow-Origin", "*")
-        resp.status = falcon.HTTP_200
-
-
-class ProcessTerminatingEndpoint(object):
-    def __init__(self, passcode):
-        self.passcode = passcode
-
-    def on_get(self, rqst, resp):
-        passcode = rqst.get_param("passcode")
-        if passcode == self.passcode:
-            retnjson = ProcessHandler(int(rqst.get_param("prociden"))).process_terminator()
-        else:
-            retnjson = {"retnmesg": "deny"}
-        resp.body = json.dumps(retnjson, ensure_ascii=False)
-        resp.set_header("Access-Control-Allow-Origin", "*")
-        resp.status = falcon.HTTP_200
-
-
-class ProcessSuspendingEndpoint(object):
-    def __init__(self, passcode):
-        self.passcode = passcode
-
-    def on_get(self, rqst, resp):
-        passcode = rqst.get_param("passcode")
-        if passcode == self.passcode:
-            retnjson = ProcessHandler(int(rqst.get_param("prociden"))).process_suspender()
-        else:
-            retnjson = {"retnmesg": "deny"}
-        resp.body = json.dumps(retnjson, ensure_ascii=False)
-        resp.set_header("Access-Control-Allow-Origin", "*")
-        resp.status = falcon.HTTP_200
-
-
-class ProcessResumingEndpoint(object):
-    def __init__(self, passcode):
-        self.passcode = passcode
-
-    def on_get(self, rqst, resp):
-        passcode = rqst.get_param("passcode")
-        if passcode == self.passcode:
-            retnjson = ProcessHandler(int(rqst.get_param("prociden"))).process_resumer()
-        else:
-            retnjson = {"retnmesg": "deny"}
-        resp.body = json.dumps(retnjson, ensure_ascii=False)
-        resp.set_header("Access-Control-Allow-Origin", "*")
-        resp.status = falcon.HTTP_200
 
 
 main = falcon.API()
@@ -154,34 +48,27 @@ def mainfunc(portdata, netprotc):
         netpdata = ""
         passcode = ConnectionManager().passphrase_generator()
         if netprotc == "ipprotv6":
-            click.echo(" * " + click.style("IP version       ", fg="magenta") + ": " + "6")
+            click.echo(" * " + click.style("IP version        ", fg="magenta") + ": " + "6")
             netpdata = "::"
         elif netprotc == "ipprotv4":
-            click.echo(" * " + click.style("IP version       ", fg="magenta") + ": " + "4")
+            click.echo(" * " + click.style("IP version        ", fg="magenta") + ": " + "4")
             netpdata = "0.0.0.0"
-        click.echo(" * " + click.style("Passcode         ", fg="magenta") + ": " + passcode + "\n" +
-                   " * " + click.style("Reference URI    ", fg="magenta") + ": " + "http://" + netpdata + ":" + portdata +
+        click.echo(" * " + click.style("Passcode          ", fg="magenta") + ": " + passcode + "\n" +
+                   " * " + click.style("Reference URI     ", fg="magenta") + ": " + "http://" + netpdata + ":" + portdata +
                    "/" + "\n" +
-                   " * " + click.style("Monitor service  ", fg="magenta") + ": " + "Psutil v" + psutvers + "\n" +
-                   " * " + click.style("Endpoint service ", fg="magenta") + ": " + "Falcon v" + flcnvers + "\n" +
-                   " * " + click.style("HTTP server      ", fg="magenta") + ": " + "Werkzeug v" + wkzgvers)
-        livesync = LiveUpdatingEndpoint(passcode)
-        deadsync = DeadUpdatingEndpoint(passcode)
+                   " * " + click.style("Monitor service   ", fg="magenta") + ": " + "DockerPy v" + dockvers + "\n" +
+                   " * " + click.style("Container service ", fg="magenta") + ": " + "Psutil v" + psutvers + "\n" +
+                   " * " + click.style("Endpoint service  ", fg="magenta") + ": " + "Falcon v" + flcnvers + "\n" +
+                   " * " + click.style("HTTP server       ", fg="magenta") + ": " + "Werkzeug v" + wkzgvers)
+        statsync = StatisticalEndpoint(passcode)
         procinfo = ProcessHandlingEndpoint(passcode)
-        killproc = ProcessKillingEndpoint(passcode)
-        termproc = ProcessTerminatingEndpoint(passcode)
-        suspproc = ProcessSuspendingEndpoint(passcode)
-        resmproc = ProcessResumingEndpoint(passcode)
-        main.add_route("/livesync", livesync)
-        main.add_route("/deadsync", deadsync)
+        proctool = ProcessControllingEndpoint(passcode)
+        main.add_route("/statsync", statsync)
         main.add_route("/procinfo", procinfo)
-        main.add_route("/killproc", killproc)
-        main.add_route("/termproc", termproc)
-        main.add_route("/suspproc", suspproc)
-        main.add_route("/resmproc", resmproc)
+        main.add_route("/proctool", proctool)
         serving.run_simple(netpdata, int(portdata), main)
     except Exception as expt:
-        click.echo(" * " + click.style("Error occurred   : " + str(expt), fg="red"))
+        click.echo(" * " + click.style("Error occurred    : " + str(expt), fg="red"))
 
 
 if __name__ == "__main__":
