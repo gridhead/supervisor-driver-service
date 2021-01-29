@@ -24,7 +24,7 @@ import json
 import click
 import falcon
 from falcon import __version__ as flcnvers
-from hard import (
+from base.hard import (
     ConnectionManager,
     DeadUpdatingElements,
     LiveUpdatingElements,
