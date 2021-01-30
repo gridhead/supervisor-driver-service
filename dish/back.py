@@ -59,7 +59,7 @@ class DockerContainerInformation:
                 "ports": contobjc.ports,
                 "status": contobjc.status,
                 "image": {
-                    "name": contobjc.image.name,
+                    "name": contobjc.image.tags[0],
                     "short_id": contobjc.image.short_id
                 }
             }
