@@ -19,6 +19,7 @@
 ##########################################################################
 """
 
+import json
 from secrets import choice
 
 import click
@@ -49,6 +50,21 @@ class ConnectionManager:
     def passphrase_generator(self, lent=16):
         retndata = "".join(choice("ABCDEF0123456789") for indx in range(lent))
         return retndata
+
+
+class ConnectionExaminationEndpoint(object):
+    def __init__(self, passcode):
+        self.passcode = passcode
+
+    def on_get(self, rqst, resp):
+        passcode = rqst.get_param("passcode")
+        if passcode == self.passcode:
+            retnjson = {"retnmesg": "allow"}
+        else:
+            retnjson = {"retnmesg": "deny"}
+        resp.body = json.dumps(retnjson, ensure_ascii=False)
+        resp.set_header("Access-Control-Allow-Origin", "*")
+        resp.status = falcon.HTTP_200
 
 
 @click.command()
@@ -95,6 +111,7 @@ def mainfunc(portdata, netprotc, unixsock):
         dishimej = ImageInformationEndpoint(passcode, unixsock)
         dishntwk = NetworkInformationEndpoint(passcode, unixsock)
         dishvolm = VolumeInformationEndpoint(passcode, unixsock)
+        testconn = ConnectionExaminationEndpoint(passcode)
         main.add_route("/basestat", basestat)
         main.add_route("/basepsin", basepsin)
         main.add_route("/basetool", basetool)
@@ -103,6 +120,7 @@ def mainfunc(portdata, netprotc, unixsock):
         main.add_route("/dishimej", dishimej)
         main.add_route("/dishntwk", dishntwk)
         main.add_route("/dishvolm", dishvolm)
+        main.add_route("/testconn", testconn)
         serving.run_simple(netpdata, int(portdata), main)
     except Exception as expt:
         click.echo(" * " + click.style("Error occurred    : " + str(expt), fg="red"))

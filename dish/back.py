@@ -116,7 +116,7 @@ class DockerImageInformation:
         for indx in imejlist:
             dispdict[indx.short_id] = {
                 "id": indx.id,
-                "name": indx.name,
+                "name": indx.tags[0],
             }
         return dispdict
 
