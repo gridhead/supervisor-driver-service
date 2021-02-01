@@ -126,7 +126,7 @@ class DockerImageInformation:
             dispdict = {
                 "short_id": imejobjc.short_id,
                 "id": imejobjc.id,
-                "name": imejobjc.name,
+                "name": imejobjc.tags[0],
                 "attrs": imejobjc.attrs,
                 "labels": imejobjc.labels,
                 "tags": imejobjc.tags
@@ -141,7 +141,7 @@ class DockerImageInformation:
         try:
             imejobjc = self.clinobjc.images.get(imejiden)
             dispdict = {
-                "history": imejobjc.history
+                "history": imejobjc.history()
             }
         except:
             dispdict = {
