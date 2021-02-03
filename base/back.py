@@ -83,27 +83,39 @@ class ProcessHandler:
 
     def process_killer(self):
         singproc = self.get_single_process()
-        if type(singproc) == psutil.Process:
-            singproc.kill()
-        return {"retnmesg": True}
+        try:
+            if type(singproc) == psutil.Process:
+                singproc.kill()
+            return {"retnmesg": True}
+        except:
+            return {"retnmesg": False}
 
     def process_terminator(self):
         singproc = self.get_single_process()
-        if type(singproc) == psutil.Process:
-            singproc.terminate()
-        return {"retnmesg": True}
+        try:
+            if type(singproc) == psutil.Process:
+                singproc.terminate()
+            return {"retnmesg": True}
+        except:
+            return {"retnmesg": False}
 
     def process_suspender(self):
         singproc = self.get_single_process()
-        if type(singproc) == psutil.Process:
-            singproc.suspend()
-        return {"retnmesg": True}
+        try:
+            if type(singproc) == psutil.Process:
+                singproc.suspend()
+            return {"retnmesg": True}
+        except:
+            return {"retnmesg": False}
 
     def process_resumer(self):
         singproc = self.get_single_process()
-        if type(singproc) == psutil.Process:
-            singproc.resume()
-        return {"retnmesg": True}
+        try:
+            if type(singproc) == psutil.Process:
+                singproc.resume()
+            return {"retnmesg": True}
+        except:
+            return {"retnmesg": False}
 
 
 class LiveUpdatingElements:
