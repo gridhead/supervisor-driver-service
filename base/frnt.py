@@ -30,6 +30,10 @@ class StatisticalEndpoint(object):
         self.passcode = passcode
 
     def on_get(self, rqst, resp):
+        """
+        Endpoint for fetching host station information
+        Method: GET
+        """
         passcode = rqst.get_param("passcode")
         opername = rqst.get_param("opername")
         if passcode == self.passcode:
@@ -51,6 +55,10 @@ class ProcessHandlingEndpoint(object):
         self.passcode = passcode
 
     def on_get(self, rqst, resp):
+        """
+        Endpoint for fetching information about a specific process
+        Method: GET
+        """
         passcode = rqst.get_param("passcode")
         if passcode == self.passcode:
             retnjson = ProcessHandler(int(rqst.get_param("prociden"))).return_process_info()
@@ -66,6 +74,10 @@ class ProcessControllingEndpoint(object):
         self.passcode = passcode
 
     def on_get(self, rqst, resp):
+        """
+        Endpoint for controlling specific processes
+        Method: GET
+        """
         passcode = rqst.get_param("passcode")
         opername = rqst.get_param("opername")
         prociden = int(rqst.get_param("prociden"))

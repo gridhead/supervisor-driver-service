@@ -37,6 +37,10 @@ class PreliminaryInformationEndpoint(object):
         self.unixsock = unixsock
 
     def on_get(self, rqst, resp):
+        """
+        Endpoint for fetching container station information
+        Method: GET
+        """
         passcode = rqst.get_param("passcode")
         opername = rqst.get_param("opername")
         if passcode == self.passcode:
@@ -59,6 +63,10 @@ class ContainerInformationEndpoint(object):
         self.unixsock = unixsock
 
     def on_get(self, rqst, resp):
+        """
+        Endpoint for fetching container information
+        Method: GET
+        """
         passcode = rqst.get_param("passcode")
         opername = rqst.get_param("opername")
         if passcode == self.passcode:
@@ -91,6 +99,10 @@ class ImageInformationEndpoint(object):
         self.unixsock = unixsock
 
     def on_get(self, rqst, resp):
+        """
+        Endpoint for fetching image information
+        Method: GET
+        """
         passcode = rqst.get_param("passcode")
         opername = rqst.get_param("opername")
         if passcode == self.passcode:
@@ -117,6 +129,10 @@ class NetworkInformationEndpoint(object):
         self.unixsock = unixsock
 
     def on_get(self, rqst, resp):
+        """
+        Endpoint for fetching network information
+        Method: GET
+        """
         passcode = rqst.get_param("passcode")
         opername = rqst.get_param("opername")
         if passcode == self.passcode:
@@ -140,6 +156,10 @@ class VolumeInformationEndpoint(object):
         self.unixsock = unixsock
 
     def on_get(self, rqst, resp):
+        """
+        Endpoint for fetching volume information
+        Method: GET
+        """
         passcode = rqst.get_param("passcode")
         opername = rqst.get_param("opername")
         if passcode == self.passcode:

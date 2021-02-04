@@ -68,11 +68,38 @@ class ConnectionExaminationEndpoint(object):
 
 
 @click.command()
-@click.option("-p", "--portdata", "portdata", help="Set the port value [0-65536].", default="6969")
-@click.option("-u", "--unixsock", "unixsock", help="Set the UNIX socket for Docker.", default="unix://var/run/docker.sock")
-@click.option("-6", "--ipprotv6", "netprotc", flag_value="ipprotv6", help="Start the server on an IPv6 address.")
-@click.option("-4", "--ipprotv4", "netprotc", flag_value="ipprotv4", help="Start the server on an IPv4 address.")
-@click.version_option(version="1.1.0-beta", prog_name=click.style("SuperVisor Driver Service", fg="magenta"))
+@click.option(
+    "-p",
+    "--portdata",
+    "portdata",
+    help="Set the port value [0-65536].",
+    default="6969"
+)
+@click.option(
+    "-u",
+    "--unixsock",
+    "unixsock",
+    help="Set the UNIX socket for Docker.",
+    default="unix://var/run/docker.sock"
+)
+@click.option(
+    "-6",
+    "--ipprotv6",
+    "netprotc",
+    flag_value="ipprotv6",
+    help="Start the server on an IPv6 address."
+)
+@click.option(
+    "-4",
+    "--ipprotv4",
+    "netprotc",
+    flag_value="ipprotv4",
+    help="Start the server on an IPv4 address."
+)
+@click.version_option(
+    version="1.1.0-beta",
+    prog_name=click.style("SuperVisor Driver Service", fg="magenta")
+)
 def mainfunc(portdata, netprotc, unixsock):
     try:
         click.echo(
@@ -102,7 +129,6 @@ def mainfunc(portdata, netprotc, unixsock):
             " * " + click.style("Endpoint service  ", bold=True) + ": " + "Falcon v" + flcnvers + "\n" +
             " * " + click.style("HTTP server       ", bold=True) + ": " + "Werkzeug v" + wkzgvers
         )
-
         basestat = StatisticalEndpoint(passcode)
         basepsin = ProcessHandlingEndpoint(passcode)
         basetool = ProcessControllingEndpoint(passcode)

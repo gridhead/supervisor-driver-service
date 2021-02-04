@@ -27,9 +27,15 @@ class DockerPreliminaryInformation:
         self.clinobjc = DockerClient(base_url=unixsock)
 
     def get_docker_info(self):
+        """
+        Returns container station information
+        """
         return self.clinobjc.info()
 
     def get_docker_version(self):
+        """
+        Returns container station versioning
+        """
         return self.clinobjc.version()
 
 
@@ -38,6 +44,9 @@ class DockerContainerInformation:
         self.clinobjc = DockerClient(base_url=unixsock)
 
     def get_container_list(self):
+        """
+        Returns list of containers
+        """
         contlist = self.clinobjc.containers.list(all=True)
         dispdict = {}
         for indx in contlist:
@@ -48,6 +57,9 @@ class DockerContainerInformation:
         return dispdict
 
     def get_per_container_static_information(self, contiden):
+        """
+        Returns preliminary information of a selected container
+        """
         try:
             contobjc = self.clinobjc.containers.get(contiden)
             dispdict = {
@@ -70,6 +82,9 @@ class DockerContainerInformation:
         return dispdict
 
     def get_per_container_logs_data(self, contiden):
+        """
+        Returns logging information of a selected container
+        """
         try:
             contobjc = self.clinobjc.containers.get(contiden)
             dispdict = {
@@ -82,6 +97,9 @@ class DockerContainerInformation:
         return dispdict
 
     def get_per_container_top_data(self, contiden):
+        """
+        Returns list of processes running in a selected container
+        """
         try:
             contobjc = self.clinobjc.containers.get(contiden)
             dispdict = {
@@ -94,6 +112,9 @@ class DockerContainerInformation:
         return dispdict
 
     def get_per_container_statistics(self, contiden):
+        """
+        Returns hardware statistics of a selected container
+        """
         try:
             contobjc = self.clinobjc.containers.get(contiden)
             dispdict = {
@@ -111,6 +132,9 @@ class DockerImageInformation:
         self.clinobjc = DockerClient(base_url=unixsock)
 
     def get_image_list(self):
+        """
+        Returns list of images
+        """
         imejlist = self.clinobjc.images.list(all=True)
         dispdict = {}
         for indx in imejlist:
@@ -121,6 +145,9 @@ class DockerImageInformation:
         return dispdict
 
     def get_per_image_static_information(self, imejiden):
+        """
+        Returns preliminary information of a selected image
+        """
         try:
             imejobjc = self.clinobjc.images.get(imejiden)
             dispdict = {
@@ -138,6 +165,9 @@ class DockerImageInformation:
         return dispdict
 
     def get_per_image_revision_history(self, imejiden):
+        """
+        Returns revision history of a selected container
+        """
         try:
             imejobjc = self.clinobjc.images.get(imejiden)
             dispdict = {
@@ -155,6 +185,9 @@ class DockerNetworkInformation:
         self.clinobjc = DockerClient(base_url=unixsock)
 
     def get_network_list(self):
+        """
+        Returns list of networks
+        """
         ntwklist = self.clinobjc.networks.list()
         dispdict = {}
         for indx in ntwklist:
@@ -165,6 +198,9 @@ class DockerNetworkInformation:
         return dispdict
 
     def get_per_network_static_information(self, ntwkiden):
+        """
+        Returns preliminary information of a selected network
+        """
         try:
             ntwkobjc = self.clinobjc.networks.get(ntwkiden)
             dispdict = {
@@ -185,6 +221,9 @@ class DockerVolumeInformation:
         self.clinobjc = DockerClient(base_url=unixsock)
 
     def get_volume_list(self):
+        """
+        Returns list of volumes
+        """
         volmlist = self.clinobjc.volumes.list()
         dispdict = {}
         for indx in volmlist:
@@ -195,6 +234,9 @@ class DockerVolumeInformation:
         return dispdict
 
     def get_per_volume_static_information(self, volmiden):
+        """
+        Returns preliminary information of a selected volume
+        """
         try:
             volmobjc = self.clinobjc.volumes.get(volmiden)
             dispdict = {
