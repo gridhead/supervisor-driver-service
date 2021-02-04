@@ -1,7 +1,7 @@
 """
 ##########################################################################
 *
-*   Copyright © 2019-2020 Akashdeep Dhar <t0xic0der@fedoraproject.org>
+*   Copyright © 2019-2021 Akashdeep Dhar <t0xic0der@fedoraproject.org>
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -22,15 +22,8 @@
 import getpass
 import os
 import time
-from secrets import choice
 
 import psutil
-
-
-class ConnectionManager:
-    def passphrase_generator(self, lent=16):
-        retndata = "".join(choice("ABCDEF0123456789") for i in range(lent))
-        return retndata
 
 
 class ProcessHandler:
@@ -38,6 +31,9 @@ class ProcessHandler:
         self.prociden = prociden
 
     def return_process_info(self):
+        """
+        Returns process information
+        """
         procstmp = psutil.Process(self.prociden).as_dict()
         retndata = {
             "pid": procstmp["pid"],
@@ -83,38 +79,68 @@ class ProcessHandler:
         return retndata
 
     def get_single_process(self):
+        """
+        Returns information about a single process
+        """
         try:
             return psutil.Process(int(self.prociden))
         except Exception as e:
             return str(e)
 
     def process_killer(self):
+        """
+        Kills process with the requested process ID
+        """
         singproc = self.get_single_process()
-        if type(singproc) == psutil.Process:
-            singproc.kill()
-        return {"retnmesg": True}
+        try:
+            if type(singproc) == psutil.Process:
+                singproc.kill()
+            return {"retnmesg": True}
+        except:
+            return {"retnmesg": False}
 
     def process_terminator(self):
+        """
+        Terminates process with the requested process ID
+        """
         singproc = self.get_single_process()
-        if type(singproc) == psutil.Process:
-            singproc.terminate()
-        return {"retnmesg": True}
+        try:
+            if type(singproc) == psutil.Process:
+                singproc.terminate()
+            return {"retnmesg": True}
+        except:
+            return {"retnmesg": False}
 
     def process_suspender(self):
+        """
+        Suspends process with the requested process ID
+        """
         singproc = self.get_single_process()
-        if type(singproc) == psutil.Process:
-            singproc.suspend()
-        return {"retnmesg": True}
+        try:
+            if type(singproc) == psutil.Process:
+                singproc.suspend()
+            return {"retnmesg": True}
+        except:
+            return {"retnmesg": False}
 
     def process_resumer(self):
+        """
+        Resumes process with the requested process ID
+        """
         singproc = self.get_single_process()
-        if type(singproc) == psutil.Process:
-            singproc.resume()
-        return {"retnmesg": True}
+        try:
+            if type(singproc) == psutil.Process:
+                singproc.resume()
+            return {"retnmesg": True}
+        except:
+            return {"retnmesg": False}
 
 
 class LiveUpdatingElements:
     def get_virtual_memory_data(self):
+        """
+        Returns physical memory data
+        """
         bruhdata = psutil.virtual_memory()
         retndata = {
             "total": bruhdata.total,
@@ -131,6 +157,9 @@ class LiveUpdatingElements:
         return retndata
 
     def get_swap_memory_info(self):
+        """
+        Returns virtual memory data
+        """
         swapinfo = psutil.swap_memory()
         retndata = {
             "total": swapinfo.total,
@@ -143,6 +172,9 @@ class LiveUpdatingElements:
         return retndata
 
     def get_cpu_state_times(self):
+        """
+        Returns CPU state time information
+        """
         timedata = psutil.cpu_times(percpu=True)
         retndata = {}
         for indx in range(len(timedata)):
@@ -162,6 +194,9 @@ class LiveUpdatingElements:
         return retndata
 
     def get_cpu_usage_percent(self):
+        """
+        Returns CPU usage percentage per-core
+        """
         cpuprcnt = psutil.cpu_percent(percpu=True)
         retndata = {}
         for indx in range(len(cpuprcnt)):
@@ -169,6 +204,9 @@ class LiveUpdatingElements:
         return retndata
 
     def get_cpu_statistics(self):
+        """
+        Returns CPU statistical information
+        """
         cpustats = psutil.cpu_stats()
         retndata = {
             "ctx_switches": cpustats.ctx_switches,
@@ -179,6 +217,9 @@ class LiveUpdatingElements:
         return retndata
 
     def get_cpu_clock_speed(self):
+        """
+        Returns CPU clock speed information per-core
+        """
         cpuclock = psutil.cpu_freq(percpu=True)
         retndata = {}
         for indx in range(len(cpuclock)):
@@ -191,6 +232,9 @@ class LiveUpdatingElements:
         return retndata
 
     def get_disk_io_usage(self):
+        """
+        Returns disk IO usage
+        """
         diousage = psutil.disk_io_counters(perdisk=True)
         retndata = {}
         for indx in diousage.keys():
@@ -209,6 +253,9 @@ class LiveUpdatingElements:
         return retndata
 
     def get_network_io_usage(self):
+        """
+        Returns network IO usage
+        """
         netusage = psutil.net_io_counters(pernic=True)
         retndata = {}
         for indx in netusage.keys():
@@ -226,6 +273,9 @@ class LiveUpdatingElements:
         return retndata
 
     def get_process_listing_info(self):
+        """
+        Returns process listing information
+        """
         procstmp = psutil.process_iter(["pid", "name", "username", "memory_percent", "cpu_percent"])
         retndata = {}
         for indx in procstmp:
@@ -240,6 +290,9 @@ class LiveUpdatingElements:
         return retndata
 
     def get_sensors_temperature(self):
+        """
+        Returns thermal statistics
+        """
         senstemp = psutil.sensors_temperatures(fahrenheit=False)
         retndata = {}
         for indx in senstemp.keys():
@@ -255,6 +308,9 @@ class LiveUpdatingElements:
         return retndata
 
     def get_sensors_fan_speed(self):
+        """
+        Returns fan speed information
+        """
         senstemp = psutil.sensors_fans()
         retndata = {}
         for indx in senstemp.keys():
@@ -268,6 +324,9 @@ class LiveUpdatingElements:
         return retndata
 
     def get_sensors_battery_status(self):
+        """
+        Returns battery statistics
+        """
         retndata = {}
         try:
             battstat = psutil.sensors_battery()
@@ -285,6 +344,9 @@ class LiveUpdatingElements:
         return retndata
 
     def return_live_data(self):
+        """
+        Returns combined information as a dictionary
+        """
         jsonobjc = {
             "virtdata": self.get_virtual_memory_data(),
             "swapinfo": self.get_swap_memory_info(),
@@ -306,6 +368,9 @@ class LiveUpdatingElements:
 
 class DeadUpdatingElements(LiveUpdatingElements):
     def get_os_uname_data(self):
+        """
+        Returns static OS information
+        """
         unamdata = os.uname()
         retndata = {
             "System name": unamdata.sysname + " " + unamdata.release,
@@ -316,10 +381,16 @@ class DeadUpdatingElements(LiveUpdatingElements):
         return retndata
 
     def get_cpu_logical_count(self):
+        """
+        Returns CPU core count
+        """
         cpuquant = psutil.cpu_count(logical=True)
         return str(cpuquant)
 
     def get_all_disk_partitions(self):
+        """
+        Returns disk partitions information
+        """
         diskpart = psutil.disk_partitions(all=True)
         retndata = []
         for indx in diskpart:
@@ -333,6 +404,9 @@ class DeadUpdatingElements(LiveUpdatingElements):
         return retndata
 
     def get_network_statistics(self):
+        """
+        Returns network statistics
+        """
         netstats = psutil.net_if_stats()
         retndata = {}
         for indx in netstats.keys():
@@ -346,6 +420,9 @@ class DeadUpdatingElements(LiveUpdatingElements):
         return retndata
 
     def get_network_if_addresses(self):
+        """
+        Returns network addresses
+        """
         netaddrs = psutil.net_if_addrs()
         retndata = {}
         for indx in netaddrs.keys():
@@ -361,10 +438,16 @@ class DeadUpdatingElements(LiveUpdatingElements):
         return retndata
 
     def get_boot_time(self):
+        """
+        Returns boot time information
+        """
         boottime = time.ctime(psutil.boot_time())
         return boottime
 
     def return_dead_data(self):
+        """
+        Returns combined information as a dictionary
+        """
         jsonobjc = {
             "osnmdata": self.get_os_uname_data(),
             "cpuquant": self.get_cpu_logical_count(),
