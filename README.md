@@ -37,10 +37,9 @@ Service](https://github.com/t0xic0der/supervisor-frontend-service/) and manage t
 
 ## Table of contents
 1. [Home](https://github.com/t0xic0der/supervisor-driver-service/wiki)
-2. [Notice](https://github.com/t0xic0der/supervisor-driver-service/wiki/Notice)
-3. [Installation](https://github.com/t0xic0der/supervisor-driver-service/wiki/Installation)
-4. [Download releases](https://github.com/t0xic0der/supervisor-driver-service/releases)
-5. [SuperVisor Frontend Service](https://github.com/t0xic0der/supervisor-frontend-service)
+2. [Installation](https://github.com/t0xic0der/supervisor-driver-service/wiki/Installation)
+3. [Download releases](https://github.com/t0xic0der/supervisor-driver-service/releases)
+4. [SuperVisor Frontend Service](https://github.com/t0xic0der/supervisor-frontend-service)
 
 ## Contribute
 You may request for the addition of new features in the [issues](https://github.com/t0xic0der/supervisor-driver-service/issues) 
