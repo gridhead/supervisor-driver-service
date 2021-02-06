@@ -1,0 +1,13 @@
+version: "3"
+services:
+  terminal:
+    image: khallnayak/docker-python
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ~/superbisor/terminado:/terminado
+    ports:
+      - 8765:8765
+    environment:
+      - suber_cont=$suber_cont
+      - suber_cmd=$suber_cmd
+    command: sh -c "pip3 install -r terminado/demos/requirements.txt && python3 /terminado/demos/single.py $suber_cont $suber_cmd"
