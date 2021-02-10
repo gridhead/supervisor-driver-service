@@ -19,22 +19,26 @@
 ##########################################################################
 """
 
-import tornado.ioloop
+from tornado.ioloop import IOLoop
 import tornado.web
 from terminado import TermSocket, UniqueTermManager
 import sys
 from hashlib import sha256
 
 
-def inptloop(termmngr):
-    loop = tornado.ioloop.IOLoop.instance()
-    try:
-        loop.start()
-    except KeyboardInterrupt:
-        print("\nShutting down on SIGINT")
-    finally:
-        termmngr.shutdown()
-        loop.close()
+class AttachmentEndpoint(tornado.web.RequestHandler):
+    def set_default_headers(self):
+        self.set_header("Access-Control-Allow-Origin", "*")
+
+    def get(self):
+        try:
+            contiden = self.get_argument("contiden")
+            comdexec = self.get_argument("comdexec")
+            self.write(addhandr(contiden, comdexec))
+        except Exception as expt:
+            print("Console attachment failed! - " + str(expt))
+            self.set_header("Access-Control-Allow-Origin", "*")
+            self.write({"retnmesg": "deny"})
 
 
 termmngr = UniqueTermManager(shell_command=["sh"])
@@ -46,6 +50,9 @@ handlers = [
         {
             "term_manager": termmngr
         }
+    ),
+    (
+        r"/atchcons/", AttachmentEndpoint
     )
 ]
 
@@ -56,6 +63,7 @@ def mainterm(portqant):
         mainobjc = tornado.web.Application(handlers)
         print(" * TermSocket started on port " + portqant)
         mainobjc.listen(portqant, "0.0.0.0")
+        IOLoop.instance().start()
     except KeyboardInterrupt:
         print("\nShutting down on SIGINT")
     finally:
@@ -64,11 +72,12 @@ def mainterm(portqant):
 
 def addhandr(contiden, comdexec):
     try:
-        print(contiden, comdexec)
+        print(" * " + comdexec + " attached to " + contiden)
         urlpatrn = sha256((contiden + comdexec).encode()).hexdigest()
         comdexec = comdexec.split()
         stndexec = ["docker", "exec", "-ti", contiden]
-        stndexec.append(comdexec)
+        for indx in comdexec:
+            stndexec.append(indx)
         mainobjc.add_handlers(
             r".*",  # match any host
             [
@@ -85,7 +94,7 @@ def addhandr(contiden, comdexec):
             "urlpatrn": urlpatrn
         }
     except Exception as expt:
-        print("Failed to attach terminal" + "\n" + str(expt))
+        print(" * Failed to attach terminal" + "\n" + str(expt))
         return {
             "retnmesg": "deny"
         }

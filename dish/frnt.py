@@ -29,7 +29,6 @@ from dish.back import (
     DockerNetworkInformation,
     DockerVolumeInformation
 )
-from dish.term import addhandr
 
 
 class PreliminaryInformationEndpoint(object):
@@ -85,10 +84,6 @@ class ContainerInformationEndpoint(object):
             elif opername == "STAT":
                 contiden = rqst.get_param("contiden")
                 retnjson = DockerContainerInformation(self.unixsock).get_per_container_statistics(contiden)
-            elif opername == "CONS":
-                contiden = rqst.get_param("contiden")
-                comdexec = rqst.get_param("comdexec")
-                retnjson = addhandr(contiden, comdexec)
             else:
                 retnjson = {"retnmesg": "deny"}
         else:
