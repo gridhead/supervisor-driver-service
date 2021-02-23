@@ -62,6 +62,10 @@ class DockerContainerInformation:
         """
         try:
             contobjc = self.clinobjc.containers.get(contiden)
+            try:
+                imejname = contobjc.image.tags[0]
+            except:
+                imejname = "UNAVAILABLE"
             dispdict = {
                 "short_id": contobjc.short_id,
                 "id": contobjc.id,
@@ -71,7 +75,7 @@ class DockerContainerInformation:
                 "ports": contobjc.ports,
                 "status": contobjc.status,
                 "image": {
-                    "name": contobjc.image.tags[0],
+                    "name": imejname,
                     "short_id": contobjc.image.short_id
                 }
             }
@@ -138,9 +142,13 @@ class DockerImageInformation:
         imejlist = self.clinobjc.images.list(all=True)
         dispdict = {}
         for indx in imejlist:
+            try:
+                imejname = indx.tags[0]
+            except:
+                imejname = "UNAVAILABLE"
             dispdict[indx.short_id] = {
                 "id": indx.id,
-                "name": indx.tags[0],
+                "name": imejname,
             }
         return dispdict
 
@@ -150,10 +158,14 @@ class DockerImageInformation:
         """
         try:
             imejobjc = self.clinobjc.images.get(imejiden)
+            try:
+                imejname = imejobjc.tags[0]
+            except:
+                imejname = "UNAVAILABLE"
             dispdict = {
                 "short_id": imejobjc.short_id,
                 "id": imejobjc.id,
-                "name": imejobjc.tags[0],
+                "name": imejname,
                 "attrs": imejobjc.attrs,
                 "labels": imejobjc.labels,
                 "tags": imejobjc.tags
