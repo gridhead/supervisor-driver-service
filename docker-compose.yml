@@ -1,0 +1,11 @@
+version: "3.8"
+services:
+  endpoint:
+    build: .
+    command: python3 falc.py -p 8888 -s 6969
+    ports:
+      - "8888:8888"
+      - "6969:6969"
+    volumes:
+      - ".:/supervisor-driver-service"
+      - "/var/run/docker.sock:/var/run/docker.sock"

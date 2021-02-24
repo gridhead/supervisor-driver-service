@@ -20,6 +20,7 @@
 """
 
 import json
+from multiprocessing import Process
 from secrets import choice
 
 import click
@@ -29,6 +30,7 @@ from base.frnt import (
     ProcessHandlingEndpoint,
     StatisticalEndpoint,
 )
+from dish.term import mainterm
 from dish.frnt import (
     ContainerInformationEndpoint,
     ImageInformationEndpoint,
@@ -39,6 +41,7 @@ from dish.frnt import (
 from docker import __version__ as dockvers
 from falcon import __version__ as flcnvers
 from psutil import __version__ as psutvers
+from terminado import __version__ as termvers
 from werkzeug import __version__ as wkzgvers
 from werkzeug import serving
 
@@ -72,7 +75,14 @@ class ConnectionExaminationEndpoint(object):
     "-p",
     "--portdata",
     "portdata",
-    help="Set the port value [0-65536].",
+    help="Set the port value for synchronization [0-65536].",
+    default="8888"
+)
+@click.option(
+    "-s",
+    "--sockport",
+    "sockport",
+    help="Set the port value for termsocket [0-65536].",
     default="6969"
 )
 @click.option(
@@ -100,7 +110,7 @@ class ConnectionExaminationEndpoint(object):
     version="1.1.0-beta",
     prog_name=click.style("SuperVisor Driver Service", fg="magenta")
 )
-def mainfunc(portdata, netprotc, unixsock):
+def mainfunc(portdata, sockport, netprotc, unixsock):
     try:
         click.echo(
             click.style(
@@ -122,10 +132,13 @@ def mainfunc(portdata, netprotc, unixsock):
             netpdata = "0.0.0.0"
         click.echo(
             " * " + click.style("Passcode          ", bold=True) + ": " + passcode + "\n" +
-            " * " + click.style("Reference URI     ", bold=True) + ": " + "http://" + netpdata + ":" + portdata +
+            " * " + click.style("Sync URI          ", bold=True) + ": " + "http://" + netpdata + ":" + portdata +
+            "/" + "\n" +
+            " * " + click.style("TermSocket URI    ", bold=True) + ": " + "http://" + netpdata + ":" + sockport +
             "/" + "\n" +
             " * " + click.style("Monitor service   ", bold=True) + ": " + "Psutil v" + psutvers + "\n" +
             " * " + click.style("Container service ", bold=True) + ": " + "DockerPy v" + dockvers + "\n" +
+            " * " + click.style("WebSocket service ", bold=True) + ": " + "Terminado v" + termvers + "\n" +
             " * " + click.style("Endpoint service  ", bold=True) + ": " + "Falcon v" + flcnvers + "\n" +
             " * " + click.style("HTTP server       ", bold=True) + ": " + "Werkzeug v" + wkzgvers
         )
@@ -147,7 +160,10 @@ def mainfunc(portdata, netprotc, unixsock):
         main.add_route("/dishntwk", dishntwk)
         main.add_route("/dishvolm", dishvolm)
         main.add_route("/testconn", testconn)
+        sockproc = Process(target=mainterm, args=(sockport,))
+        sockproc.start()
         serving.run_simple(netpdata, int(portdata), main)
+        sockproc.terminate()
     except Exception as expt:
         click.echo(" * " + click.style("Error occurred    : " + str(expt), fg="red"))
 
