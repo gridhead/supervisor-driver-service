@@ -30,7 +30,7 @@ from base.frnt import (
     ProcessHandlingEndpoint,
     StatisticalEndpoint,
 )
-from base.term import mainterm
+from dish.term import mainterm
 from dish.frnt import (
     ContainerInformationEndpoint,
     ImageInformationEndpoint,
