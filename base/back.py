@@ -30,6 +30,23 @@ class ProcessHandler:
     def __init__(self, prociden):
         self.prociden = prociden
 
+    def return_process_listing_info(self):
+        """
+        Returns process listing information
+        """
+        procstmp = psutil.process_iter(["pid", "name", "username", "memory_percent", "cpu_percent"])
+        retndata = {}
+        for indx in procstmp:
+            singlist = {
+                "pid": indx.info["pid"],
+                "name": indx.info["name"],
+                "username": indx.info["username"],
+                "memory_percent": indx.info["memory_percent"],
+                "cpu_percent": indx.info["cpu_percent"],
+            }
+            retndata[indx.info["pid"]] = singlist
+        return retndata
+
     def return_process_info(self):
         """
         Returns process information
@@ -272,23 +289,6 @@ class LiveUpdatingElements:
             retndata[indx] = singlist
         return retndata
 
-    def get_process_listing_info(self):
-        """
-        Returns process listing information
-        """
-        procstmp = psutil.process_iter(["pid", "name", "username", "memory_percent", "cpu_percent"])
-        retndata = {}
-        for indx in procstmp:
-            singlist = {
-                "pid": indx.info["pid"],
-                "name": indx.info["name"],
-                "username": indx.info["username"],
-                "memory_percent": indx.info["memory_percent"],
-                "cpu_percent": indx.info["cpu_percent"],
-            }
-            retndata[indx.info["pid"]] = singlist
-        return retndata
-
     def get_sensors_temperature(self):
         """
         Returns thermal statistics
@@ -356,7 +356,6 @@ class LiveUpdatingElements:
             "cpuclock": self.get_cpu_clock_speed(),
             "diousage": self.get_disk_io_usage(),
             "netusage": self.get_network_io_usage(),
-            "procinfo": self.get_process_listing_info(),
             "sensread": {
                 "senstemp": self.get_sensors_temperature(),
                 "fanspeed": self.get_sensors_fan_speed(),
@@ -458,7 +457,6 @@ class DeadUpdatingElements(LiveUpdatingElements):
             "netaddrs": self.get_network_if_addresses(),
             "netstats": self.get_network_statistics(),
             "boottime": self.get_boot_time(),
-            "procinfo": self.get_process_listing_info(),
             "sensread": {
                 "senstemp": self.get_sensors_temperature(),
                 "fanspeed": self.get_sensors_fan_speed(),

@@ -25,12 +25,13 @@ from secrets import choice
 
 import click
 import falcon
+from __init__ import __version__ as drivvers
 from base.frnt import (
     ProcessControllingEndpoint,
     ProcessHandlingEndpoint,
     StatisticalEndpoint,
 )
-from dish.term import mainterm
+from base.mtrc import GatherMetricToStorage, MetricsRetrievingEndpoint
 from dish.frnt import (
     ContainerInformationEndpoint,
     ImageInformationEndpoint,
@@ -38,9 +39,11 @@ from dish.frnt import (
     PreliminaryInformationEndpoint,
     VolumeInformationEndpoint,
 )
+from dish.term import mainterm
 from docker import __version__ as dockvers
 from falcon import __version__ as flcnvers
 from psutil import __version__ as psutvers
+from redis import __version__ as redsvers
 from terminado import __version__ as termvers
 from werkzeug import __version__ as wkzgvers
 from werkzeug import serving
@@ -60,6 +63,10 @@ class ConnectionExaminationEndpoint(object):
         self.passcode = passcode
 
     def on_get(self, rqst, resp):
+        """
+        Endpoint for testing connection attempts
+        Method: GET
+        """
         passcode = rqst.get_param("passcode")
         if passcode == self.passcode:
             retnjson = {"retnmesg": "allow"}
@@ -100,6 +107,20 @@ class ConnectionExaminationEndpoint(object):
     help="Start the server on an IPv6 address."
 )
 @click.option(
+    "-d",
+    "--duration",
+    "duration",
+    help="Set the timeperiod for metric storage.",
+    default=10
+)
+@click.option(
+    "-q",
+    "--recsqant",
+    "recsqant",
+    help="Set the number of maintained records.",
+    default=1000
+)
+@click.option(
     "-4",
     "--ipprotv4",
     "netprotc",
@@ -107,11 +128,14 @@ class ConnectionExaminationEndpoint(object):
     help="Start the server on an IPv4 address."
 )
 @click.version_option(
-    version="1.1.0-beta",
+    version=drivvers,
     prog_name=click.style("SuperVisor Driver Service", fg="magenta")
 )
-def mainfunc(portdata, sockport, netprotc, unixsock):
+def mainfunc(portdata, sockport, netprotc, duration, recsqant, unixsock):
     try:
+        """
+        Initial prompt display
+        """
         click.echo(
             click.style(
                 " ,---.                    .    ,o               \n" +
@@ -121,7 +145,7 @@ def mainfunc(portdata, sockport, netprotc, unixsock):
                 "           |", bold=True
             )
         )
-        click.echo(" * " + click.style("Driver Service v1.1.0-beta", fg="green"))
+        click.echo(" * " + click.style("Driver Service " + drivvers, fg="green"))
         netpdata = ""
         passcode = ConnectionManager().passphrase_generator()
         if netprotc == "ipprotv6":
@@ -138,6 +162,7 @@ def mainfunc(portdata, sockport, netprotc, unixsock):
             "/" + "\n" +
             " * " + click.style("Monitor service   ", bold=True) + ": " + "Psutil v" + psutvers + "\n" +
             " * " + click.style("Container service ", bold=True) + ": " + "DockerPy v" + dockvers + "\n" +
+            " * " + click.style("Datastore service ", bold=True) + ": " + "RedisPy v" + redsvers + "\n" +
             " * " + click.style("WebSocket service ", bold=True) + ": " + "Terminado v" + termvers + "\n" +
             " * " + click.style("Endpoint service  ", bold=True) + ": " + "Falcon v" + flcnvers + "\n" +
             " * " + click.style("HTTP server       ", bold=True) + ": " + "Werkzeug v" + wkzgvers
@@ -151,6 +176,7 @@ def mainfunc(portdata, sockport, netprotc, unixsock):
         dishntwk = NetworkInformationEndpoint(passcode, unixsock)
         dishvolm = VolumeInformationEndpoint(passcode, unixsock)
         testconn = ConnectionExaminationEndpoint(passcode)
+        mtrcrecv = MetricsRetrievingEndpoint(passcode, duration, recsqant)
         main.add_route("/basestat", basestat)
         main.add_route("/basepsin", basepsin)
         main.add_route("/basetool", basetool)
@@ -160,8 +186,12 @@ def mainfunc(portdata, sockport, netprotc, unixsock):
         main.add_route("/dishntwk", dishntwk)
         main.add_route("/dishvolm", dishvolm)
         main.add_route("/testconn", testconn)
+        main.add_route("/mtrcrecv", mtrcrecv)
+        prdcgthr = GatherMetricToStorage(duration, recsqant)
         sockproc = Process(target=mainterm, args=(sockport,))
+        ftchproc = Process(target=prdcgthr.continuously_store_data)
         sockproc.start()
+        ftchproc.start()
         serving.run_simple(netpdata, int(portdata), main)
         sockproc.terminate()
     except Exception as expt:
