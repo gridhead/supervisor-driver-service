@@ -24,6 +24,7 @@ import tornado.web
 from terminado import TermSocket, UniqueTermManager
 import sys
 from hashlib import sha256
+from click import echo
 
 
 class AttachmentEndpoint(tornado.web.RequestHandler):
@@ -36,7 +37,7 @@ class AttachmentEndpoint(tornado.web.RequestHandler):
             comdexec = self.get_argument("comdexec")
             self.write(addhandr(contiden, comdexec))
         except Exception as expt:
-            print("Console attachment failed! - " + str(expt))
+            echo(" * Console attachment failed! - " + str(expt))
             self.set_header("Access-Control-Allow-Origin", "*")
             self.write({"retnmesg": "deny"})
 
@@ -61,18 +62,18 @@ def mainterm(portqant):
     try:
         global mainobjc
         mainobjc = tornado.web.Application(handlers)
-        print(" * TermSocket started on port " + portqant)
+        echo(" * TermSocket started on port " + portqant)
         mainobjc.listen(portqant, "0.0.0.0")
         IOLoop.instance().start()
     except KeyboardInterrupt:
-        print("\nShutting down on SIGINT")
+        echo("\n" + " * Shutting down on SIGINT")
     finally:
         sys.exit()
 
 
 def addhandr(contiden, comdexec):
     try:
-        print(" * " + comdexec + " attached to " + contiden)
+        echo(" * " + comdexec + " attached to " + contiden)
         urlpatrn = sha256((contiden + comdexec).encode()).hexdigest()
         comdexec = comdexec.split()
         stndexec = ["docker", "exec", "-ti", contiden]
@@ -94,7 +95,7 @@ def addhandr(contiden, comdexec):
             "urlpatrn": urlpatrn
         }
     except Exception as expt:
-        print(" * Failed to attach terminal" + "\n" + str(expt))
+        echo(" * Failed to attach terminal" + "\n" + str(expt))
         return {
             "retnmesg": "deny"
         }
