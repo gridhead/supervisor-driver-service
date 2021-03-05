@@ -118,7 +118,7 @@ class ConnectionExaminationEndpoint(object):
     "--recsqant",
     "recsqant",
     help="Set the number of maintained records.",
-    default=1000
+    default=2160
 )
 @click.option(
     "-4",
