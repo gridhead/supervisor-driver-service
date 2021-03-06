@@ -1,17 +1,11 @@
 version: "3.8"
 services:
   endpoint:
-    build:
-      context: .
-      dockerfile: edptfile
-    entrypoint: "python3 falc.py -p 8888 -s 6969 -4"
+    build: .
+    entrypoint: "python3 falc.py -d 10 -q 2160 -p 8888 -s 6969 -4"
     ports:
       - "8888:8888"
       - "6969:6969"
     volumes:
       - ".:/supervisor-driver-service"
       - "/var/run/docker.sock:/var/run/docker.sock"
-  storaged:
-    build:
-      context: .
-      dockerfile: datafile

@@ -21,6 +21,7 @@
 
 import json
 from hashlib import sha256
+from os import system
 from sys import exit
 from time import ctime, sleep, time
 
@@ -30,12 +31,32 @@ from click import echo
 from redis import Redis
 
 
+class RedisDatastoreServerSetup():
+    def __init__(self, portnumb, protmode):
+        self.portnumb = str(portnumb)
+        if protmode:
+            self.protmode = "yes"
+        else:
+            self.protmode = "no"
+
+    def execute_redis_server_process(self):
+        """
+        Starting a local Redis datastore server at port 6379 and disabled protected mode
+        """
+        try:
+            echo(" * Starting Redis datastore server...")
+            system("redis-server --port " + self.portnumb + " --protected-mode " + self.protmode)
+        except KeyboardInterrupt:
+            echo("\n" + " * Stopped Redis datastore server...")
+            exit()
+
+
 class MetricsRetrievingEndpoint(object):
     def __init__(self, passcode, duration, recsqant):
         """
         Initialize storage connection
         """
-        self.baseobjc = Redis(host="storaged", port=6379)
+        self.baseobjc = Redis(host="127.0.0.1", port=6379)
         self.passcode = passcode
         self.duration = duration
         self.recsqant = recsqant
@@ -78,7 +99,7 @@ class GatherMetricToStorage(object):
         Initialize storage connection
         """
         echo(" * Initializing metric fetch system...")
-        self.baseobjc = Redis(host="storaged", port=6379)
+        self.baseobjc = Redis(host="127.0.0.1", port=6379)
         self.duration = duration
         self.recsqant = recsqant
 

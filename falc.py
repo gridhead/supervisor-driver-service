@@ -31,7 +31,11 @@ from base.frnt import (
     ProcessHandlingEndpoint,
     StatisticalEndpoint,
 )
-from base.mtrc import GatherMetricToStorage, MetricsRetrievingEndpoint
+from base.mtrc import (
+    GatherMetricToStorage,
+    MetricsRetrievingEndpoint,
+    RedisDatastoreServerSetup,
+)
 from dish.frnt import (
     ContainerInformationEndpoint,
     ImageInformationEndpoint,
@@ -54,6 +58,9 @@ main = falcon.API()
 
 class ConnectionManager:
     def passphrase_generator(self, lent=16):
+        """
+        Function to randomly generate a 16-character long hexadecimal passcode
+        """
         retndata = "".join(choice("ABCDEF0123456789") for indx in range(lent))
         return retndata
 
@@ -187,11 +194,18 @@ def mainfunc(portdata, sockport, netprotc, duration, recsqant, unixsock):
         main.add_route("/dishvolm", dishvolm)
         main.add_route("/testconn", testconn)
         main.add_route("/mtrcrecv", mtrcrecv)
-        prdcgthr = GatherMetricToStorage(duration, recsqant)
+        # Start the Redis datastore server as a subprocess
+        redsobjc = RedisDatastoreServerSetup(6379, False)
+        rediserv = Process(target=redsobjc.execute_redis_server_process)
+        rediserv.start()
+        # Start the termsocket server as a subprocess
         sockproc = Process(target=mainterm, args=(sockport,))
-        ftchproc = Process(target=prdcgthr.continuously_store_data)
         sockproc.start()
+        # Start the periodic storage of metrics as a subprocess
+        prdcgthr = GatherMetricToStorage(duration, recsqant)
+        ftchproc = Process(target=prdcgthr.continuously_store_data)
         ftchproc.start()
+        # Start the JSON API server as the main process
         serving.run_simple(netpdata, int(portdata), main)
         sockproc.terminate()
     except Exception as expt:
