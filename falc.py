@@ -22,6 +22,7 @@
 import json
 from multiprocessing import Process
 from secrets import choice
+from time import sleep
 
 import click
 import falcon
@@ -198,6 +199,9 @@ def mainfunc(portdata, sockport, netprotc, duration, recsqant, unixsock):
         redsobjc = RedisDatastoreServerSetup(6379, False)
         rediserv = Process(target=redsobjc.execute_redis_server_process)
         rediserv.start()
+        # Including mandatory sleep defaulted to 1 second for the Redis process to get started
+        # Might need some more time in slower devices
+        sleep(1)
         # Start the termsocket server as a subprocess
         sockproc = Process(target=mainterm, args=(sockport,))
         sockproc.start()
