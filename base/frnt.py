@@ -60,8 +60,19 @@ class ProcessHandlingEndpoint(object):
         Method: GET
         """
         passcode = rqst.get_param("passcode")
+        opername = rqst.get_param("opername")
+        prociden = rqst.get_param("prociden")
         if passcode == self.passcode:
-            retnjson = ProcessHandler(int(rqst.get_param("prociden"))).return_process_info()
+            try:
+                prociden = int(prociden)
+                if opername == "INFO":
+                    retnjson = ProcessHandler(int(prociden)).return_process_info()
+                elif opername == "LIST":
+                    retnjson = ProcessHandler(0).return_process_listing_info()
+                else:
+                    retnjson = {"retnmesg": "deny"}
+            except Exception:
+                retnjson = {"retnmesg": "deny"}
         else:
             retnjson = {"retnmesg": "deny"}
         resp.body = json.dumps(retnjson, ensure_ascii=False)
@@ -80,17 +91,21 @@ class ProcessControllingEndpoint(object):
         """
         passcode = rqst.get_param("passcode")
         opername = rqst.get_param("opername")
-        prociden = int(rqst.get_param("prociden"))
+        prociden = rqst.get_param("prociden")
         if passcode == self.passcode:
-            if opername == "KILL":
-                retnjson = ProcessHandler(prociden).process_killer()
-            elif opername == "TERM":
-                retnjson = ProcessHandler(prociden).process_terminator()
-            elif opername == "HANG":
-                retnjson = ProcessHandler(prociden).process_suspender()
-            elif opername == "CONT":
-                retnjson = ProcessHandler(prociden).process_resumer()
-            else:
+            try:
+                prociden = int(prociden)
+                if opername == "KILL":
+                    retnjson = ProcessHandler(prociden).process_killer()
+                elif opername == "TERM":
+                    retnjson = ProcessHandler(prociden).process_terminator()
+                elif opername == "HANG":
+                    retnjson = ProcessHandler(prociden).process_suspender()
+                elif opername == "CONT":
+                    retnjson = ProcessHandler(prociden).process_resumer()
+                else:
+                    retnjson = {"retnmesg": "deny"}
+            except Exception:
                 retnjson = {"retnmesg": "deny"}
         else:
             retnjson = {"retnmesg": "deny"}
