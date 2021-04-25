@@ -166,7 +166,7 @@ def mainfunc(portdata, sockport, netprotc, duration, recsqant, unixsock):
             " * " + click.style("Passcode          ", bold=True) + ": " + passcode + "\n" +
             " * " + click.style("Sync URI          ", bold=True) + ": " + "http://" + netpdata + ":" + portdata +
             "/" + "\n" +
-            " * " + click.style("TermSocket URI    ", bold=True) + ": " + "http://" + netpdata + ":" + sockport +
+            " * " + click.style("TermSocket URI    ", bold=True) + ": " + "ws://" + netpdata + ":" + sockport +
             "/" + "\n" +
             " * " + click.style("Monitor service   ", bold=True) + ": " + "Psutil v" + psutvers + "\n" +
             " * " + click.style("Container service ", bold=True) + ": " + "DockerPy v" + dockvers + "\n" +
