@@ -37,7 +37,7 @@ class AttachmentEndpoint(tornado.web.RequestHandler):
             comdexec = self.get_argument("comdexec")
             self.write(addhandr(contiden, comdexec))
         except Exception as expt:
-            echo(" * Console attachment failed! - " + str(expt))
+            # echo(" * Console attachment failed! - " + str(expt))
             self.set_header("Access-Control-Allow-Origin", "*")
             self.write({"retnmesg": "deny"})
 
@@ -73,7 +73,7 @@ def mainterm(portqant):
 
 def addhandr(contiden, comdexec):
     try:
-        echo(" * " + comdexec + " attached to " + contiden)
+        # echo(" * " + comdexec + " attached to " + contiden)
         urlpatrn = sha256((contiden + comdexec).encode()).hexdigest()
         comdexec = comdexec.split()
         stndexec = ["docker", "exec", "-ti", contiden]
@@ -95,7 +95,7 @@ def addhandr(contiden, comdexec):
             "urlpatrn": urlpatrn
         }
     except Exception as expt:
-        echo(" * Failed to attach terminal" + "\n" + str(expt))
+        # echo(" * Failed to attach terminal" + "\n" + str(expt))
         return {
             "retnmesg": "deny"
         }
