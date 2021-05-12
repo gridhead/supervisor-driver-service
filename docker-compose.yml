@@ -7,5 +7,4 @@ services:
       - "8888:8888"
       - "6969:6969"
     volumes:
-      - ".:/supervisor-driver-service"
       - "/var/run/docker.sock:/var/run/docker.sock"

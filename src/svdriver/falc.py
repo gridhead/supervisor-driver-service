@@ -20,6 +20,7 @@
 """
 
 import json
+import logging
 from multiprocessing import Process
 from secrets import choice
 from time import sleep
@@ -55,6 +56,8 @@ from werkzeug import serving
 
 
 main = falcon.API()
+loge = logging.getLogger("werkzeug")
+loge.disabled = True
 
 
 class ConnectionManager:
@@ -166,7 +169,7 @@ def mainfunc(portdata, sockport, netprotc, duration, recsqant, unixsock):
             " * " + click.style("Passcode          ", bold=True) + ": " + passcode + "\n" +
             " * " + click.style("Sync URI          ", bold=True) + ": " + "http://" + netpdata + ":" + portdata +
             "/" + "\n" +
-            " * " + click.style("TermSocket URI    ", bold=True) + ": " + "http://" + netpdata + ":" + sockport +
+            " * " + click.style("TermSocket URI    ", bold=True) + ": " + "ws://" + netpdata + ":" + sockport +
             "/" + "\n" +
             " * " + click.style("Monitor service   ", bold=True) + ": " + "Psutil v" + psutvers + "\n" +
             " * " + click.style("Container service ", bold=True) + ": " + "DockerPy v" + dockvers + "\n" +

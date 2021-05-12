@@ -128,7 +128,7 @@ class GatherMetricToStorage(object):
                     self.baseobjc.keys().sort()
                     self.baseobjc.delete(self.baseobjc.keys()[0])
                 self.baseobjc.mset(self.jsonify_system_live_updating_metrics())
-                echo(" * [" + ctime() + "] Stored system metrics now...")
+                # echo(" * [" + ctime() + "] Stored system metrics now...")
                 sleep(self.duration)
         except KeyboardInterrupt as expt:
             self.baseobjc.close()
