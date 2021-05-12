@@ -20,6 +20,7 @@
 """
 
 import json
+import logging
 from multiprocessing import Process
 from secrets import choice
 from time import sleep
@@ -55,6 +56,8 @@ from werkzeug import serving
 
 
 main = falcon.API()
+loge = logging.getLogger("werkzeug")
+loge.disabled = True
 
 
 class ConnectionManager:
